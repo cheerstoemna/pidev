@@ -1,0 +1,60 @@
+.page {
+    -fx-background-color: #f7f7fb;
+}
+
+.topbar {
+    -fx-background-color: linear-gradient(to right, #1CB5A3, #70D36B);
+}
+
+.brand {
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.sidebar {
+    -fx-background-color: #F2F2F2;
+    -fx-padding: 20;
+}
+
+.nav-btn {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #e6e6e6;
+    -fx-padding: 10 12;
+    -fx-cursor: hand;
+}
+
+.nav-btn-active {
+    -fx-background-color: #DCE5DC;
+    -fx-border-color: #cfd8cf;
+}
+
+.content-area {
+    -fx-background-color: transparent;
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.btn-primary {
+    -fx-background-color: #1CB5A3;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-cursor: hand;
+}
+
+.main-scroll, .h-scroll {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.cards-row {
+    -fx-padding: 5;
+}

@@ -10,8 +10,11 @@ public class Launcher extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Dashboard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/dashboard.fxml"));
         Scene scene = new Scene(loader.load());
+
+        // add this
+        scene.getStylesheets().add(getClass().getResource("/styles/app.css").toExternalForm());
 
         stage.setTitle("MindNest");
         stage.setScene(scene);
@@ -22,4 +25,3 @@ public class Launcher extends Application {
         launch();
     }
 }
-
