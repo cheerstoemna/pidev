@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.AdminController"
+            prefWidth="1200" prefHeight="700" styleClass="app-root">
+
+    <top>
+        <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
+            <padding><Insets top="14" right="18" bottom="14" left="18"/></padding>
+            <Label text="MINDNEST" styleClass="brand"/>
+            <Label text="Admin" styleClass="topbar-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Content Manager" styleClass="muted"/>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox styleClass="sidebar" spacing="10" prefWidth="190">
+            <padding><Insets top="18" right="12" bottom="18" left="12"/></padding>
+            <Label text="Admin Menu" styleClass="sidebar-title"/>
+
+            <Button text="Content" styleClass="nav-btn"/>
+            <Button text="Users (later)" disable="true" styleClass="nav-btn-muted"/>
+            <Button text="Settings (later)" disable="true" styleClass="nav-btn-muted"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="← Back to Client" onAction="#goToClient" styleClass="link-btn"/>
+        </VBox>
+    </left>
+
+    <center>
+        <BorderPane styleClass="admin-center">
+            <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
+
+            <top>
+                <VBox spacing="10">
+                    <Label text="Manage Content" styleClass="page-title"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="filter-bar">
+                        <TextField fx:id="adminSearch" promptText="Search title / description / category..." HBox.hgrow="ALWAYS"/>
+                        <ComboBox fx:id="filterType" prefWidth="160"/>
+                        <ComboBox fx:id="filterCategory" prefWidth="170"/>
+                        <Button text="Reset" onAction="#resetFilters" styleClass="pill-btn"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="+ Add" onAction="#addContentDialog" styleClass="primary-pill"/>
+                        <Button text="Edit" onAction="#editContentDialog" styleClass="pill-btn"/>
+                        <Button text="Delete" onAction="#deleteContent" styleClass="danger-pill"/>
+                    </HBox>
+                </VBox>
+            </top>
+
+            <center>
+                <TableView fx:id="contentTable" onMouseClicked="#onRowSelect" styleClass="admin-table">
+                    <columns>
+                        <TableColumn fx:id="colId" text="ID" prefWidth="70"/>
+                        <TableColumn fx:id="colTitle" text="Title" prefWidth="380"/>
+                        <TableColumn fx:id="colType" text="Type" prefWidth="140"/>
+                        <TableColumn fx:id="colCategory" text="Category" prefWidth="160"/>
+                        <TableColumn fx:id="colDate" text="Created" prefWidth="160"/>
+                    </columns>
+                </TableView>
+            </center>
+
+            <bottom>
+                <HBox alignment="CENTER_LEFT">
+                    <Label fx:id="statusLabel" text="" styleClass="muted"/>
+                </HBox>
+            </bottom>
+        </BorderPane>
+    </center>
+
+    <right>
+        <VBox spacing="10" styleClass="preview-pane" prefWidth="420">
+            <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
+            <Label text="Preview" styleClass="section-title"/>
+            <ImageView fx:id="previewImage" fitWidth="380" fitHeight="210" preserveRatio="true" styleClass="card-thumb"/>
+            <Label fx:id="previewTitle" text="Select a post…" styleClass="detail-title"/>
+            <Label fx:id="previewMeta" text="" styleClass="muted"/>
+            <Label fx:id="previewDesc" text="" wrapText="true" styleClass="detail-desc"/>
+
+            <Button text="Open Source Link" onAction="#openSelectedLink" styleClass="primary-pill"/>
+
+            <Separator/>
+
+            <Label text="Comments" styleClass="section-title"/>
+            <ListView fx:id="commentsList" prefHeight="360"/>
+            <Label fx:id="commentsHint" text="Select a post to view comments." styleClass="muted"/>
+        </VBox>
+    </right>
+</BorderPane>
