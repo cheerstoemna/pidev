@@ -11,9 +11,12 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import models.AppUser;
 import models.Content;
+import services.AnalyticsService;
 import services.ContentService;
 import utils.ImageUtil;
+import utils.UserSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +24,14 @@ import java.util.stream.Collectors;
 
 public class ContentController {
 
-    // top bar (search + user placeholder)
+    // top bar
     @FXML private TextField globalSearch;
     @FXML private Button userBtn;
-
-    // Optional: some layouts show a small title in the top bar
     @FXML private Label pageTitle;
 
     // nav
     @FXML private Button homeBtn;
+    @FXML private Button recommendedBtn; // optional if you added it in FXML
     @FXML private Button articlesBtn;
     @FXML private Button videosBtn;
     @FXML private Button podcastsBtn;
@@ -42,7 +44,7 @@ public class ContentController {
 
     // home sections
     @FXML private HBox topBlogsRow;
-    @FXML private VBox recommendedList;
+    @FXML private VBox recommendedList; // on Home (latest/recent)
 
     // forum filters
     @FXML private TextField searchField;
@@ -52,15 +54,16 @@ public class ContentController {
     @FXML private VBox forumList;
 
     private final ContentService contentService = new ContentService();
+    private final AnalyticsService analytics = new AnalyticsService();
+
     private List<Content> current = new ArrayList<>();
     private String currentType = "All";
 
-    // ✅ navigation snapshot (like ExerciseDetailsController)
     private List<Node> previousContent;
 
     @FXML
     public void initialize() {
-        // Keep flexible layouts: only wire what exists
+
         if (typeFilter != null) {
             typeFilter.setItems(FXCollections.observableArrayList("All", "Article", "Video", "Podcast"));
             typeFilter.setValue("All");
@@ -102,13 +105,33 @@ public class ContentController {
         if (pageTitle != null) pageTitle.setText("Home");
 
         if (homePane != null) show(homePane);
-
         loadHomeSections();
     }
 
     @FXML public void handleArticles() { openForum("Article"); }
     @FXML public void handleVideos()   { openForum("Video"); }
     @FXML public void handlePodcasts() { openForum("Podcast"); }
+
+    // ✅ Recommended tab/button handler
+    @FXML
+    public void loadRecommended() {
+
+        AppUser u = UserSession.get().getUser();
+
+        if (u == null) {
+            showError("Please login first");
+            return;
+        }
+
+        if (pageTitle != null) pageTitle.setText("Recommended");
+        if (forumPane != null) show(forumPane);
+
+        // recommended list
+        List<Content> rec = contentService.getRecommended(u.getId(), 20);
+
+        // render in forum list (same cards UI)
+        renderContent(rec);
+    }
 
     // Top bar actions
     @FXML
@@ -139,7 +162,6 @@ public class ContentController {
 
         rebuildCategoryFilter();
 
-        // set UI filter value if exists
         if (typeFilter != null) typeFilter.setValue(type);
 
         loadForumData();
@@ -148,10 +170,7 @@ public class ContentController {
 
     private void show(Region pane) {
         if (centerStack == null || pane == null) return;
-
-        // hide all current children, show one
         for (Node n : centerStack.getChildren()) n.setVisible(false);
-
         pane.setVisible(true);
         pane.toFront();
     }
@@ -216,6 +235,34 @@ public class ContentController {
 
         forumList.getChildren().clear();
         for (Content c : filtered) forumList.getChildren().add(createFeedRow(c));
+    }
+
+    // ✅ This was missing in your file
+    private void renderContent(List<Content> list) {
+        if (forumList == null) return;
+        current = (list == null) ? new ArrayList<>() : list;
+
+        // set filters to "All" so they don’t hide items unexpectedly
+        if (typeFilter != null) typeFilter.setValue("All");
+        if (categoryFilter != null) categoryFilter.setValue("All");
+        if (searchField != null) searchField.setText("");
+
+        forumList.getChildren().clear();
+        for (Content c : current) forumList.getChildren().add(createFeedRow(c));
+    }
+
+    // ✅ This was missing too
+    private void showError(String msg) {
+        new Alert(Alert.AlertType.WARNING, msg, ButtonType.OK).showAndWait();
+    }
+
+    private Integer requireLoggedUserId() {
+        AppUser u = UserSession.get().getUser();
+        if (u == null) {
+            showError("Please login first");
+            return null;
+        }
+        return u.getId();
     }
 
     // ---------- UI Builders ----------
@@ -303,11 +350,13 @@ public class ContentController {
         row.getChildren().addAll(thumb, middle, spacer, votes);
         row.setOnMouseClicked(e -> openPostDetail(c));
 
+        // don’t open details if clicking vote buttons
         votes.setOnMouseClicked(e -> e.consume());
 
         return row;
     }
 
+    // ✅ Updated to use userId (toggle voting) + log analytics
     private VBox createVoteBox(Content c) {
         VBox box = new VBox(6);
         box.setAlignment(Pos.TOP_CENTER);
@@ -321,44 +370,62 @@ public class ContentController {
         score.getStyleClass().add("vote-score");
 
         up.setOnAction(e -> {
-            contentService.upvoteContent(c.getId());
-            c.setUpvotes(c.getUpvotes() + 1);
-            score.setText(String.valueOf(c.getScore()));
+            Integer uid = requireLoggedUserId();
+            if (uid == null) return;
+
+            contentService.upvoteContent(c.getId(), uid);
+            analytics.logEvent(uid, c.getId(), "UPVOTE", 4);
+
+            // refresh from DB so toggle result is correct
+            Content fresh = contentService.getById(c.getId());
+            if (fresh != null) {
+                c.setUpvotes(fresh.getUpvotes());
+                c.setDownvotes(fresh.getDownvotes());
+                score.setText(String.valueOf(c.getScore()));
+            }
         });
 
         down.setOnAction(e -> {
-            contentService.downvoteContent(c.getId());
-            c.setDownvotes(c.getDownvotes() + 1);
-            score.setText(String.valueOf(c.getScore()));
+            Integer uid = requireLoggedUserId();
+            if (uid == null) return;
+
+            contentService.downvoteContent(c.getId(), uid);
+            analytics.logEvent(uid, c.getId(), "DOWNVOTE", -2);
+
+            Content fresh = contentService.getById(c.getId());
+            if (fresh != null) {
+                c.setUpvotes(fresh.getUpvotes());
+                c.setDownvotes(fresh.getDownvotes());
+                score.setText(String.valueOf(c.getScore()));
+            }
         });
 
         box.getChildren().addAll(up, score, down);
         return box;
     }
 
-    // ---------- Navigation to detail (FIXED) ----------
+    // ---------- Navigation to detail ----------
 
     private void openPostDetail(Content c) {
         if (centerStack == null) return;
 
         try {
-            // ✅ snapshot stack content (like ExerciseDetailsController)
             previousContent = new ArrayList<>(centerStack.getChildren());
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/PostDetail.fxml"));
             Parent view = loader.load();
 
             PostDetailController controller = loader.getController();
+
+            // IMPORTANT: do NOT log VIEW here, because PostDetailController already logs VIEW in setContent()
             controller.setContent(c);
 
-            // ✅ back restores the snapshot
             controller.setOnBack(() -> {
                 if (previousContent != null && !previousContent.isEmpty()) {
                     centerStack.getChildren().setAll(previousContent);
                 }
             });
 
-            // ✅ navigate
             centerStack.getChildren().setAll(view);
 
         } catch (Exception e) {

@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import models.AppUser;
 import models.Comment;
 import models.Content;
+import services.AnalyticsService;
 import services.CommentService;
 import services.ContentService;
 import utils.ImageUtil;
@@ -45,7 +46,7 @@ public class PostDetailController {
 
     private Content content;
     private Runnable onBack;
-
+    private final AnalyticsService analytics = new AnalyticsService();
     public void setOnBack(Runnable onBack) {
         this.onBack = onBack;
     }
@@ -58,6 +59,12 @@ public class PostDetailController {
     public void setContent(Content c) {
         this.content = c;
         if (c == null) return;
+
+        // log view (only if logged in, no alerts)
+        AppUser u = UserSession.get().getUser();
+        if (u != null) {
+            analytics.logEvent(u.getId(), c.getId(), "VIEW", 1);
+        }
 
         renderContent();
         loadComments();
@@ -98,6 +105,10 @@ public class PostDetailController {
 
         try {
             Desktop.getDesktop().browse(new URI(url));
+            AppUser u = UserSession.get().getUser();
+            if (u != null && content != null) {
+                analytics.logEvent(u.getId(), content.getId(), "OPEN_LINK", 2);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait();
@@ -115,7 +126,7 @@ public class PostDetailController {
 
         // ✅ toggle upvote
         contentService.upvoteContent(content.getId(), uid);
-
+        analytics.logEvent(uid, content.getId(), "UPVOTE", 4);
         // refresh from DB (reliable)
         refreshContentFromDb();
     }
@@ -129,7 +140,7 @@ public class PostDetailController {
 
         // ✅ toggle downvote
         contentService.downvoteContent(content.getId(), uid);
-
+        analytics.logEvent(uid, content.getId(), "DOWNVOTE", -2);
         refreshContentFromDb();
     }
 
@@ -167,7 +178,7 @@ public class PostDetailController {
         }
 
         commentService.addComment(content.getId(), uid, text);
-
+        analytics.logEvent(uid, content.getId(), "COMMENT", 3);
         commentInput.clear();
         loadComments();
     }

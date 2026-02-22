@@ -409,4 +409,134 @@ public class ContentService {
         }
         return null;
     }
+    public List<Content> getRecommended(int userId, int limit) {
+        List<Content> list = new ArrayList<>();
+
+        try {
+            Connection c = conn();
+
+            // 1) Find top (category, type) pairs for this user
+            String prefSql = """
+            SELECT COALESCE(NULLIF(TRIM(c.category),''), 'General') AS category,
+                   COALESCE(NULLIF(TRIM(c.type),''), 'Article')     AS type,
+                   SUM(e.weight) AS score
+            FROM user_content_events e
+            JOIN content c ON c.id = e.content_id
+            WHERE e.user_id = ?
+            GROUP BY COALESCE(NULLIF(TRIM(c.category),''), 'General'),
+                     COALESCE(NULLIF(TRIM(c.type),''), 'Article')
+            ORDER BY score DESC
+            LIMIT 3
+        """;
+
+            List<String> cats = new ArrayList<>();
+            List<String> types = new ArrayList<>();
+
+            try (PreparedStatement ps = c.prepareStatement(prefSql)) {
+                ps.setInt(1, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        cats.add(rs.getString("category"));
+                        types.add(rs.getString("type"));
+                    }
+                }
+            }
+
+            // If no history -> fallback
+            if (cats.isEmpty()) {
+                return getTopThisWeek(limit);
+            }
+
+            // 2) Recommend matching (category, type) pairs (preferred)
+            // Build OR conditions: (category=? AND LOWER(type)=LOWER(?)) OR ...
+            StringBuilder wherePairs = new StringBuilder();
+            for (int i = 0; i < cats.size(); i++) {
+                if (i > 0) wherePairs.append(" OR ");
+                wherePairs.append("(COALESCE(NULLIF(TRIM(category),''),'General') = ? AND LOWER(type) = LOWER(?))");
+            }
+
+            String sql = """
+            SELECT id,title,description,type,source_url,image_url,category,created_at,
+                   COALESCE(upvotes,0) AS upvotes,
+                   COALESCE(downvotes,0) AS downvotes
+            FROM content
+            WHERE ( %s )
+              AND id NOT IN (
+                            SELECT content_id
+                            FROM user_content_events
+                            WHERE user_id = ?
+                              AND event_type IN ('UPVOTE','DOWNVOTE','COMMENT','OPEN_LINK')
+                          )
+            ORDER BY (COALESCE(upvotes,0) - COALESCE(downvotes,0)) DESC,
+                     created_at DESC
+            LIMIT ?
+        """.formatted(wherePairs);
+
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                int idx = 1;
+
+                for (int i = 0; i < cats.size(); i++) {
+                    ps.setString(idx++, cats.get(i));
+                    ps.setString(idx++, types.get(i));
+                }
+
+                ps.setInt(idx++, userId);
+                ps.setInt(idx, limit);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) list.add(map(rs));
+                }
+            }
+
+            // 3) If still not enough results (small DB), fill with category-only
+            if (list.size() < limit) {
+                int remaining = limit - list.size();
+
+                // Build IN for categories
+                String placeholders = String.join(",", cats.stream().map(x -> "?").toList());
+
+                String fillSql = """
+                SELECT id,title,description,type,source_url,image_url,category,created_at,
+                       COALESCE(upvotes,0) AS upvotes,
+                       COALESCE(downvotes,0) AS downvotes
+                FROM content
+                WHERE COALESCE(NULLIF(TRIM(category),''),'General') IN (%s)
+                  AND id NOT IN (
+                    SELECT content_id FROM user_content_events WHERE user_id = ?
+                  )
+                  AND id NOT IN (%s)
+                ORDER BY (COALESCE(upvotes,0) - COALESCE(downvotes,0)) DESC,
+                         created_at DESC
+                LIMIT ?
+            """.formatted(placeholders, alreadyInListPlaceholders(list.size()));
+
+                try (PreparedStatement ps = c.prepareStatement(fillSql)) {
+                    int idx = 1;
+
+                    for (String cat : cats) ps.setString(idx++, cat);
+                    ps.setInt(idx++, userId);
+
+                    // exclude already selected ids
+                    for (Content x : list) ps.setInt(idx++, x.getId());
+
+                    ps.setInt(idx, remaining);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) list.add(map(rs));
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    // helper for dynamic "NOT IN (?, ?, ?)" placeholders
+    private String alreadyInListPlaceholders(int n) {
+        if (n <= 0) return "0"; // NOT IN (0) does nothing for positive ids
+        return String.join(",", java.util.Collections.nCopies(n, "?"));
+    }
 }
