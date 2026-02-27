@@ -9,6 +9,9 @@ import java.util.List;
 
 public class CommentService {
 
+    // NEW: moderation client
+    private final PerspectiveModerationService moderation = new PerspectiveModerationService();
+
     private Connection conn() throws SQLException {
         Connection c = MyDB.getInstance().getConnection();
         if (c == null) throw new SQLException("MyDB.getConnection() returned null.");
@@ -16,8 +19,15 @@ public class CommentService {
     }
 
     public void addComment(int contentId, int userId, String text) {
+
+        // ✅ NEW: block toxic comments BEFORE inserting
+        if (moderation.isToxic(text)) {
+            throw new ToxicCommentException("Your comment looks toxic/abusive. Please rephrase and try again.");
+        }
+
         String sql = "INSERT INTO comments (content_id, user_id, text, upvotes, upvoters_json, downvoters_json) " +
                 "VALUES (?, ?, ?, 0, '[]', '[]')";
+
         try {
             Connection c = conn();
             try (PreparedStatement ps = c.prepareStatement(sql)) {
@@ -26,8 +36,12 @@ public class CommentService {
                 ps.setString(3, text);
                 ps.executeUpdate();
             }
+        } catch (ToxicCommentException e) {
+            // let controller handle it
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException("DB insert failed: " + e.getMessage(), e);
         }
     }
 
@@ -180,6 +194,7 @@ public class CommentService {
     private String toJson(List<Integer> list) {
         return list.toString();
     }
+
     public void deleteComment(int id) {
         String sql = "DELETE FROM comments WHERE id=?";
         try {

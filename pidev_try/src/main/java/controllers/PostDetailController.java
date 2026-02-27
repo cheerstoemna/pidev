@@ -15,6 +15,7 @@ import models.Content;
 import services.AnalyticsService;
 import services.CommentService;
 import services.ContentService;
+import services.ToxicCommentException;
 import utils.ImageUtil;
 import utils.UserSession;
 
@@ -47,6 +48,7 @@ public class PostDetailController {
     private Content content;
     private Runnable onBack;
     private final AnalyticsService analytics = new AnalyticsService();
+
     public void setOnBack(Runnable onBack) {
         this.onBack = onBack;
     }
@@ -94,7 +96,7 @@ public class PostDetailController {
             a.showAndWait();
             return null;
         }
-        return u.getId(); // your AppUser constructor uses (id, name, role) -> id getter should exist
+        return u.getId();
     }
 
     @FXML
@@ -124,10 +126,8 @@ public class PostDetailController {
         Integer uid = requireLoggedUserId();
         if (uid == null) return;
 
-        // ✅ toggle upvote
         contentService.upvoteContent(content.getId(), uid);
         analytics.logEvent(uid, content.getId(), "UPVOTE", 4);
-        // refresh from DB (reliable)
         refreshContentFromDb();
     }
 
@@ -138,7 +138,6 @@ public class PostDetailController {
         Integer uid = requireLoggedUserId();
         if (uid == null) return;
 
-        // ✅ toggle downvote
         contentService.downvoteContent(content.getId(), uid);
         analytics.logEvent(uid, content.getId(), "DOWNVOTE", -2);
         refreshContentFromDb();
@@ -177,7 +176,17 @@ public class PostDetailController {
             return;
         }
 
-        commentService.addComment(content.getId(), uid, text);
+        try {
+            commentService.addComment(content.getId(), uid, text);
+        } catch (ToxicCommentException ex) {
+            new Alert(Alert.AlertType.WARNING, ex.getMessage(), ButtonType.OK).showAndWait();
+            return;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Failed to post comment: " + ex.getMessage(), ButtonType.OK).showAndWait();
+            return;
+        }
+
         analytics.logEvent(uid, content.getId(), "COMMENT", 3);
         commentInput.clear();
         loadComments();
@@ -199,7 +208,6 @@ public class PostDetailController {
         card.getStyleClass().add("comment-card");
         card.setPadding(new Insets(12));
 
-        // header
         String uname = safe(c.getUserName());
         if (uname.isBlank()) uname = "User #" + c.getUserId();
 
@@ -215,12 +223,10 @@ public class PostDetailController {
         HBox header = new HBox(10, user, spacer, date);
         header.setAlignment(Pos.CENTER_LEFT);
 
-        // body
         Label body = new Label(safe(c.getText()));
         body.setWrapText(true);
         body.getStyleClass().add("comment-text");
 
-        // votes (TOGGLE)
         Button up = new Button("▲");
         up.getStyleClass().add("vote-btn");
 
@@ -235,7 +241,7 @@ public class PostDetailController {
             if (uid == null) return;
 
             commentService.upvoteComment(c.getId(), uid);
-            loadComments(); // simplest accurate refresh
+            loadComments();
         });
 
         down.setOnAction(e -> {

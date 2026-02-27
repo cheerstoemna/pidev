@@ -37,14 +37,7 @@ public class ImageUtil {
 
             // http(s) : download to temp (cached)
             if (raw.startsWith("http://") || raw.startsWith("https://")) {
-                String local = CACHE.get(raw);
-                if (local == null || !Files.exists(Path.of(local))) {
-                    local = downloadToTemp(raw);
-                    if (local != null) CACHE.put(raw, local);
-                }
-                if (local != null) {
-                    return new Image(new File(local).toURI().toString(), w, h, true, true, true);
-                }
+
                 // fallback to direct load
                 return new Image(raw, w, h, true, true, true);
             }

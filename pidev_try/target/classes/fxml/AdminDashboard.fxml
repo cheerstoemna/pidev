@@ -5,8 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="700" prefWidth="1200" styleClass="app-root" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminController">
-
+<BorderPane prefHeight="700" prefWidth="1200" styleClass="app-root" stylesheets="@../css/client-professional-theme.css, @../css/content-professional-theme.css, @../css/admin-professional-theme.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AdminController">
 
     <center>
         <BorderPane styleClass="admin-center">
@@ -15,15 +14,15 @@
             <top>
                 <VBox spacing="10">
                     <Label styleClass="page-title" text="Manage Content" />
-                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="filter-bar">
+                    <HBox alignment="CENTER_LEFT" prefHeight="85.0" prefWidth="737.0" spacing="10" styleClass="filter-bar">
                         <TextField fx:id="adminSearch" promptText="Search title / description / category..." HBox.hgrow="ALWAYS" />
                         <ComboBox fx:id="filterType" prefWidth="160" />
                         <ComboBox fx:id="filterCategory" prefWidth="170" />
-                        <Button onAction="#resetFilters" styleClass="pill-btn" text="Reset" />
+                        <Button onAction="#resetFilters" prefHeight="37.0" prefWidth="61.0" styleClass="pill-btn" text="🔄" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Button onAction="#addContentDialog" styleClass="primary-pill" text="+ Add" />
-                        <Button onAction="#editContentDialog" styleClass="pill-btn" text="Edit" />
-                        <Button onAction="#deleteContent" styleClass="danger-pill" text="Delete" />
+                        <Button onAction="#addContentDialog" prefHeight="38.0" prefWidth="60.0" styleClass="primary-pill" text="➕" />
+                        <Button onAction="#editContentDialog" prefHeight="37.0" prefWidth="58.0" styleClass="pill-btn" text="✏" />
+                        <Button onAction="#deleteContent" styleClass="danger-pill" text="🗑" />
                     </HBox>
                 </VBox>
             </top>
