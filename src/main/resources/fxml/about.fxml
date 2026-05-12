@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:id="rootPane"
+           fx:controller="controllers.AboutController"
+           styleClass="about-page">
+
+    <children>
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    style="-fx-background-color: transparent; -fx-background: transparent;">
+            <content>
+                <VBox spacing="22" maxWidth="940" prefWidth="940" style="-fx-padding: 28;">
+
+                    <VBox spacing="18" styleClass="about-hero-card">
+                        <StackPane fx:id="heroImageShell" styleClass="about-hero-image-shell">
+                            <ImageView fx:id="heroImageView" fitWidth="880" fitHeight="270" preserveRatio="false" smooth="true">
+                                <image>
+                                    <Image url="@images/about-wellness.jpg"/>
+                                </image>
+                            </ImageView>
+                            <AnchorPane pickOnBounds="false" styleClass="about-hero-overlay">
+                                <children>
+                                    <VBox spacing="10" AnchorPane.leftAnchor="26.0" AnchorPane.bottomAnchor="24.0" maxWidth="520">
+                                        <Label text="About Us" styleClass="about-hero-kicker"/>
+                                        <Label text="A calmer, brighter place to grow through support."
+                                               wrapText="true"
+                                               styleClass="about-hero-overlay-title"/>
+                                        <Label text="MindNest connects reflection, coaching, sessions, and follow-up in one elegant flow so progress feels easier to keep returning to."
+                                               wrapText="true"
+                                               styleClass="about-hero-overlay-body"/>
+                                    </VBox>
+                                </children>
+                            </AnchorPane>
+                        </StackPane>
+
+                        <VBox spacing="14" styleClass="about-hero-content">
+                            <Label text="What We Believe" styleClass="about-section-title"/>
+                            <Label text="Support works better when it feels clear, welcoming, and consistent. MindNest brings your important routines together so growth does not get lost between tools."
+                                   wrapText="true"
+                                   styleClass="about-body"/>
+
+                            <FlowPane hgap="12" vgap="12" prefWrapLength="820">
+                                <Button text="Guided content"
+                                        onAction="#openContent"
+                                        style="-fx-background-color: linear-gradient(to right, #ecfdf5, #dcfce7); -fx-border-color: #bbf7d0; -fx-border-radius: 999; -fx-background-radius: 999; -fx-border-width: 1; -fx-text-fill: #0f766e; -fx-font-weight: 700; -fx-padding: 10 18; -fx-cursor: hand;"/>
+                                <Button text="Journal and quiz"
+                                        onAction="#openJournalQuiz"
+                                        style="-fx-background-color: linear-gradient(to right, #eff6ff, #dbeafe); -fx-border-color: #bfdbfe; -fx-border-radius: 999; -fx-background-radius: 999; -fx-border-width: 1; -fx-text-fill: #2563eb; -fx-font-weight: 700; -fx-padding: 10 18; -fx-cursor: hand;"/>
+                                <Button text="Coaching support"
+                                        onAction="#openCoaching"
+                                        style="-fx-background-color: linear-gradient(to right, #fff7ed, #ffedd5); -fx-border-color: #fed7aa; -fx-border-radius: 999; -fx-background-radius: 999; -fx-border-width: 1; -fx-text-fill: #d97706; -fx-font-weight: 700; -fx-padding: 10 18; -fx-cursor: hand;"/>
+                                <Button text="Therapy follow-up"
+                                        onAction="#openTherapy"
+                                        style="-fx-background-color: linear-gradient(to right, #faf5ff, #ede9fe); -fx-border-color: #ddd6fe; -fx-border-radius: 999; -fx-background-radius: 999; -fx-border-width: 1; -fx-text-fill: #7c3aed; -fx-font-weight: 700; -fx-padding: 10 18; -fx-cursor: hand;"/>
+                            </FlowPane>
+                        </VBox>
+                    </VBox>
+
+                    <FlowPane hgap="16" vgap="16" prefWrapLength="900">
+                        <VBox spacing="8" styleClass="about-card" prefWidth="285">
+                            <Label text="Clarity" styleClass="about-kicker"/>
+                            <Label text="Less friction, more focus." wrapText="true" styleClass="about-card-title"/>
+                            <Label text="We make it easier to know where to go next, whether you want to learn, reflect, or reconnect with a plan."
+                                   wrapText="true"
+                                   styleClass="about-body"/>
+                        </VBox>
+
+                        <VBox spacing="8" styleClass="about-card" prefWidth="285">
+                            <Label text="Continuity" styleClass="about-kicker"/>
+                            <Label text="Everything stays connected." wrapText="true" styleClass="about-card-title"/>
+                            <Label text="Progress feels stronger when journaling, coaching, sessions, and feedback support each other instead of living apart."
+                                   wrapText="true"
+                                   styleClass="about-body"/>
+                        </VBox>
+
+                        <VBox spacing="8" styleClass="about-card" prefWidth="285">
+                            <Label text="Warmth" styleClass="about-kicker-warm"/>
+                            <Label text="A softer digital experience." wrapText="true" styleClass="about-card-title"/>
+                            <Label text="We care about how the space feels, not just what it does. Calm design makes returning easier."
+                                   wrapText="true"
+                                   styleClass="about-body"/>
+                        </VBox>
+                    </FlowPane>
+
+                    <VBox spacing="18" styleClass="about-panel">
+                        <Label text="Built for steadier mental wellness routines" styleClass="about-section-title"/>
+                        <Label text="Small check-ins, guided plans, and consistent follow-through help support feel more real in everyday life."
+                               wrapText="true"
+                               styleClass="about-body"/>
+
+                        <FlowPane hgap="16" vgap="16" prefWrapLength="900">
+                            <VBox spacing="8" styleClass="about-subcard-green" prefWidth="280">
+                                <Label text="Reflect" styleClass="about-subtitle"/>
+                                <Label text="Come back to your thoughts, mood, and daily experience without starting from zero."
+                                       wrapText="true"
+                                       styleClass="about-body"/>
+                            </VBox>
+                            <VBox spacing="8" styleClass="about-subcard-green" prefWidth="280">
+                                <Label text="Practice" styleClass="about-subtitle"/>
+                                <Label text="Turn support into something usable through coaching exercises and routines you can revisit."
+                                       wrapText="true"
+                                       styleClass="about-body"/>
+                            </VBox>
+                            <VBox spacing="8" styleClass="about-subcard-warm" prefWidth="280">
+                                <Label text="Continue" styleClass="about-subtitle"/>
+                                <Label text="Keep sessions, feedback, and progress connected so care feels continuous instead of scattered."
+                                       wrapText="true"
+                                       styleClass="about-body"/>
+                            </VBox>
+                        </FlowPane>
+                    </VBox>
+
+                    <VBox spacing="18" styleClass="about-panel">
+                        <Label text="How MindNest Helps" styleClass="about-section-title"/>
+                        <Label text="Each role gets a clearer way to stay aligned around care and progress."
+                               wrapText="true"
+                               styleClass="about-body"/>
+
+                        <FlowPane hgap="16" vgap="16" prefWrapLength="900">
+                            <VBox spacing="8" styleClass="about-card" prefWidth="280">
+                                <Label text="Patients" styleClass="about-subtitle"/>
+                                <Label text="Explore content, reflect through journaling, revisit coaching plans, and keep sessions and feedback close at hand."
+                                       wrapText="true"
+                                       styleClass="about-body"/>
+                            </VBox>
+                            <VBox spacing="8" styleClass="about-card" prefWidth="280">
+                                <Label text="Coaches" styleClass="about-subtitle"/>
+                                <Label text="Create plans and exercises that stay easy to browse, revisit, and build on over time."
+                                       wrapText="true"
+                                       styleClass="about-body"/>
+                            </VBox>
+                            <VBox spacing="8" styleClass="about-card" prefWidth="280">
+                                <Label text="Therapists" styleClass="about-subtitle"/>
+                                <Label text="Stay focused on sessions and follow-up while the rest of the support journey remains connected around the user."
+                                       wrapText="true"
+                                       styleClass="about-body"/>
+                            </VBox>
+                        </FlowPane>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
+</StackPane>

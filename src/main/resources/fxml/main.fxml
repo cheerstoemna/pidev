@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.MainController"
+      spacing="10"
+      styleClass="journal-shell"
+      prefWidth="1000" prefHeight="700">
+
+    <!-- TOP BUTTONS -->
+    <HBox spacing="10" styleClass="journal-top-switcher" alignment="CENTER_LEFT">
+        <Button text="Quizzes" fx:id="quizBtn" styleClass="journal-tab-btn journal-tab-btn-active"/>
+        <Button text="Journal" fx:id="journalBtn" styleClass="journal-tab-btn"/>
+        <Region HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- CONTENT AREA -->
+    <StackPane fx:id="contentPane" style="-fx-padding: 15; -fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+        <!-- Loaded content will appear here -->
+    </StackPane>
+
+</VBox>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.DashboardController"
+            styleClass="page">
+
+    <children>
+        <AnchorPane fx:id="contentArea"
+                    styleClass="content-area"
+                    AnchorPane.topAnchor="0.0"
+                    AnchorPane.bottomAnchor="0.0"
+                    AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0">
+
+            <children>
+                <ScrollPane fitToWidth="true"
+                            hbarPolicy="NEVER"
+                            vbarPolicy="AS_NEEDED"
+                            styleClass="main-scroll"
+                            AnchorPane.topAnchor="0.0"
+                            AnchorPane.bottomAnchor="0.0"
+                            AnchorPane.leftAnchor="0.0"
+                            AnchorPane.rightAnchor="0.0">
+
+                    <content>
+                        <VBox fx:id="contentRoot"
+                              spacing="22"
+                              style="-fx-padding: 24 40 32 40;">
+
+                            <HBox alignment="CENTER_LEFT" spacing="14">
+                                <Button fx:id="addPlanBtn"
+                                        text="+ Add Plan"
+                                        onAction="#openAddPlan"
+                                        prefWidth="200.0"
+                                        prefHeight="40.0"
+                                        styleClass="btn-primary" />
+
+                                <Region HBox.hgrow="ALWAYS"/>
+
+                                <Label fx:id="languageLabel" text="Language:"/>
+                                <ComboBox fx:id="langCombo" prefWidth="150"/>
+                                <Button fx:id="applyLangBtn"
+                                        text="Apply"
+                                        onAction="#onApplyLanguage"
+                                        styleClass="btn-secondary"/>
+                            </HBox>
+
+                            <VBox spacing="10">
+                                <Label fx:id="quoteTitleLabel"
+                                       text="One-line wisdom"
+                                       styleClass="section-title" />
+
+                                <Label fx:id="quoteLabel"
+                                       text="Loading quote..."
+                                       wrapText="true"
+                                       maxWidth="760.0"
+                                       styleClass="quote" />
+                            </VBox>
+
+                            <VBox fx:id="favoritesSection" spacing="14">
+                                <Label fx:id="favoritesTitle"
+                                       text="Favorites"
+                                       styleClass="section-title" />
+
+                                <FlowPane fx:id="favoritesContainer"
+                                          hgap="18"
+                                          vgap="18"
+                                          prefWrapLength="980"
+                                          styleClass="cards-grid" />
+                            </VBox>
+
+                            <VBox fx:id="myPlansSection" spacing="14">
+                                <Label fx:id="myPlansTitle"
+                                       text="My Coaching Plans"
+                                       styleClass="section-title" />
+
+                                <FlowPane fx:id="myPlansContainer"
+                                          hgap="18"
+                                          vgap="18"
+                                          prefWrapLength="980"
+                                          styleClass="cards-grid" />
+                            </VBox>
+
+                            <VBox spacing="10">
+                                <Label fx:id="adviceTitleLabel"
+                                       text="Try this tip"
+                                       styleClass="section-title" />
+
+                                <Label fx:id="adviceLabel"
+                                       text="Loading advice..."
+                                       wrapText="true"
+                                       maxWidth="760.0"
+                                       styleClass="advice" />
+                            </VBox>
+
+                            <VBox fx:id="otherPlansSection" spacing="14">
+                                <Label fx:id="otherPlansTitle"
+                                       text="Explore Other Plans"
+                                       styleClass="section-title" />
+
+                                <FlowPane fx:id="otherPlansContainer"
+                                          hgap="18"
+                                          vgap="18"
+                                          prefWrapLength="980"
+                                          styleClass="cards-grid" />
+                            </VBox>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </children>
+        </AnchorPane>
+    </children>
+</AnchorPane>

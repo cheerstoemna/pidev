@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.ProfileController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            styleClass="profile-scroll">
+
+    <content>
+        <VBox spacing="25" styleClass="profile-page">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="15">
+                <VBox spacing="5">
+                    <Label text="My Profile" styleClass="profile-title"/>
+                    <Label text="Manage your personal information and preferences" styleClass="profile-subtitle"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="statusLabel" text="" styleClass="profile-status"/>
+            </HBox>
+
+            <HBox spacing="20" alignment="CENTER_LEFT" styleClass="profile-header-card">
+                <StackPane styleClass="profile-avatar-shell">
+                    <Label text="👤" style="-fx-font-size: 48px;"/>
+                </StackPane>
+
+                <VBox spacing="8">
+                    <Label fx:id="welcomeLabel" text="Welcome 👋" styleClass="profile-hero-title"/>
+                    <Label fx:id="emailLabel" text="" styleClass="profile-meta"/>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button fx:id="showProfileBtn"
+                        text="📋 Show Profile Details"
+                        onAction="#handleShowProfile"
+                        prefHeight="42" prefWidth="220"
+                        styleClass="profile-show-btn"/>
+            </HBox>
+
+            <VBox spacing="20" styleClass="profile-form-card">
+                <Label text="Profile Information" styleClass="profile-section-title"/>
+
+                <VBox spacing="8">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Goals" styleClass="profile-field-label"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="deleteGoalsBtn" text="🗑 Clear" onAction="#handleDeleteGoals" styleClass="profile-danger-mini"/>
+                    </HBox>
+                    <TextArea fx:id="goalsField"
+                              promptText="What are your mental health goals? (e.g., reduce anxiety, improve sleep...)"
+                              prefRowCount="3"
+                              wrapText="true"
+                              styleClass="profile-textarea"/>
+                </VBox>
+
+                <VBox spacing="8">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Interests &amp; Hobbies" styleClass="profile-field-label"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="deleteInterestsBtn" text="🗑 Clear" onAction="#handleDeleteInterests" styleClass="profile-danger-mini"/>
+                    </HBox>
+                    <TextArea fx:id="interestsField"
+                              promptText="What do you enjoy doing? (e.g., reading, yoga, painting...)"
+                              prefRowCount="3"
+                              wrapText="true"
+                              styleClass="profile-textarea"/>
+                </VBox>
+
+                <VBox spacing="8">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="About Me" styleClass="profile-field-label"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="deleteBioBtn" text="🗑 Clear" onAction="#handleDeleteBio" styleClass="profile-danger-mini"/>
+                    </HBox>
+                    <TextArea fx:id="bioField"
+                              promptText="Tell us a little about yourself, your journey, and what brings you to MindNest..."
+                              prefRowCount="4"
+                              wrapText="true"
+                              styleClass="profile-textarea"/>
+                </VBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <Button fx:id="saveBtn" text="💾 Save Profile" onAction="#handleSave" prefHeight="42" prefWidth="160" styleClass="profile-save-btn"/>
+                    <Button text="↩ Cancel" onAction="#handleCancel" prefHeight="42" prefWidth="110" styleClass="profile-cancel-btn"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="deleteBtn" text="🗑 Delete Profile" onAction="#handleDelete" prefHeight="42" prefWidth="160" styleClass="profile-delete-btn"/>
+                </HBox>
+            </VBox>
+
+            <Region minHeight="20"/>
+        </VBox>
+    </content>
+</ScrollPane>

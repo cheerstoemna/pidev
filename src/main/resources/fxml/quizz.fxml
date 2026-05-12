@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.QuizController"
+      stylesheets="@css.css"
+      spacing="18" alignment="TOP_LEFT"
+      styleClass="quiz-page">
+
+    <!-- Header -->
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <Label text="Quizzes" styleClass="quiz-page-title"/>
+        <Button fx:id="addQuizBtn" text="+ Add Quiz" styleClass="journal-primary-btn"/>
+    </HBox>
+
+    <!-- Quiz List -->
+    <ListView fx:id="quizList" prefHeight="520" VBox.vgrow="ALWAYS" styleClass="quiz-list"/>
+</VBox>
