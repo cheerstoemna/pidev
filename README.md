@@ -1,6 +1,5 @@
 *README for JavaFX Desktop App*
 
-md
 # MindNest JavaFX Application
 
 MindNest Desktop is a mental wellness desktop application built with **Java** and **JavaFX**.  
